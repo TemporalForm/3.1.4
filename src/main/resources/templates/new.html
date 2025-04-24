@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New user</title>
+</head>
+<body>
+<form th:object="${user}" th:action="@{/users}" method="post">
+
+  <label for="name">Enter name: </label>
+  <input th:field="*{name}" type="text" id="name">
+  <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+  <br>
+
+  <label for="surname">Enter surname: </label>
+  <input th:field="*{surname}" type="text" id="surname">
+  <div style="color:red" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</div>
+  <br>
+
+  <label for="email">Enter email: </label>
+  <input th:field="*{email}" type="email" id="email">
+  <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+  <br>
+
+  <label for="password">Enter password: </label>
+  <input th:field="*{password}" type="password" id="password">
+  <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
+  <br>
+
+  <input type="submit" value="Create user">
+
+</form>
+</body>
+</html>

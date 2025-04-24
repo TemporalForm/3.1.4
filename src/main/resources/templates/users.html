@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users table</title>
+</head>
+<body>
+<h1>Users list</h1>
+<h3><a href="/users/new">Create user</a></h3>
+<table border="1" , style="border-collapse: collapse; width: 30%; ">
+
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="user, iterStat : ${users}">
+        <td th:text="${iterStat.index + 1}">№</td>
+        <td th:text="${user.getName()}">Name</td>
+        <td th:text="${user.getSurname()}">Surname</td>
+        <td th:text="${user.getEmail()}">Email</td>
+        <td>
+            <a th:href="@{/users/edit(id=${user.getId()})}">edit</a>
+            <br>
+            <form th:action="@{/users/delete}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${user.id}" />
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
