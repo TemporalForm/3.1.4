@@ -13,8 +13,6 @@ import ru.kata.spring.boot_security.demo.security.UserAuthDetails;
 import java.util.List;
 import java.util.Optional;
 
-
-
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -35,7 +33,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findById(id).orElse(null);
     }
 
-    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.getUserByName(username);

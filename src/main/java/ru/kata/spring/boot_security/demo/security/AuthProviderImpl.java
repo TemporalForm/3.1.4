@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
-
 @Component
 public class AuthProviderImpl implements AuthenticationProvider {
     private final UserDetailsService userDetailsService;
@@ -22,26 +21,17 @@ public class AuthProviderImpl implements AuthenticationProvider {
         this.userDetailsService = userDetailsService;
     }
 
-    
-    
-    
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        
         String username = authentication.getName();
-        
         UserDetails userAuthDetails = userDetailsService.loadUserByUsername(username);
-        
         String password = authentication.getCredentials().toString();
-        
         if (!password.equals(userAuthDetails.getPassword())){
             throw new BadCredentialsException("Incorrect password");
         }
-        
         return new UsernamePasswordAuthenticationToken(userAuthDetails, password, Collections.emptyList());
     }
 
-    
     @Override
     public boolean supports(Class<?> authentication) {
         return true;

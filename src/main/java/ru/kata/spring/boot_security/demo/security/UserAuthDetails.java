@@ -7,9 +7,6 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.Collection;
 import java.util.List;
 
-
-
-
 public class UserAuthDetails implements UserDetails {
     private final User user;
 
@@ -19,8 +16,6 @@ public class UserAuthDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        
-        
         return List.of();
     }
 
@@ -54,7 +49,6 @@ public class UserAuthDetails implements UserDetails {
         return true;
     }
 
-    
     public User getUser() {
         return this.user;
     }
