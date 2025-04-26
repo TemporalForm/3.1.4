@@ -8,13 +8,8 @@
 <form th:object="${user}" th:action="@{/users/update/(id=${user.getId()})}" method="post">
 
     <label for="name">Enter name: </label>
-    <input th:field="*{name}" type="text" id="name">
-    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
-    <br>
-
-    <label for="surname">Enter surname: </label>
-    <input th:field="*{surname}" type="text" id="surname">
-    <div style="color:red" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</div>
+    <input th:field="*{username}" type="text" id="name">
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{username}">Name error</div>
     <br>
 
     <label for="email">Enter email: </label>

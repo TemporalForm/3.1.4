@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.controller;
+package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.repository.UserRepository;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.repositories.UserRepository;
+import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.services.UserService;
 
 import javax.validation.Valid;
 
@@ -33,21 +33,6 @@ public class UserController {
     public String printUsers(ModelMap model) {
         model.addAttribute("users", userService.getUsers());
         return "users";
-    }
-
-    @GetMapping("/users/new")
-    public String newUser(@ModelAttribute("user") User user) {
-        return "/new";
-    }
-
-    @PostMapping("/users")
-    public String addUser(@ModelAttribute("user") @Valid User user,
-                          BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "/new";
-        }
-        userService.saveUser(user);
-        return "redirect:/users";
     }
 
     @GetMapping("/users/edit")

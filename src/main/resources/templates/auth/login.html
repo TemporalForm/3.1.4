@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login page</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center; /* по горизонтали */
+            align-items: center; /* по вертикали */
+            flex-direction: column; /* <— вот это добавлено */
+        }
+    </style>
+</head>
+<body>
+<form name="f" action="/logindata_destination" method="post">
+
+    <label for="username">Enter username: </label>
+    <input type="text" name="username" id="username">
+    <br/>
+
+    <label for="password">Enter password: </label>
+    <input type="password" name="password" id="password">
+    <br/>
+
+    <input type="submit" value="Log In">
+    <a th:href="@{/auth/register}">Register</a>
+
+    <div th:if="${param.error}" style="color: red">
+        Invalid username or password.
+    </div>
+
+</form>
+</body>
+</html>
