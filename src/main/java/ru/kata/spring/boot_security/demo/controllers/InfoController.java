@@ -9,7 +9,6 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.security.Principal;
-import java.util.Optional;
 
 @Controller
 public class InfoController {
@@ -29,8 +28,8 @@ public class InfoController {
     public String userPage(Model model, Principal principal) {
         User user = userRepository
                 .getUserByUsernameWithRoles(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found")); 
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         model.addAttribute("user", user);
-        return "info/user";  
+        return "/info/user";
     }
 }

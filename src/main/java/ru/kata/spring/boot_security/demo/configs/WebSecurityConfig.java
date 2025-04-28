@@ -28,4 +28,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable() 
                 .authorizeRequests()
                 .antMatchers("/error").permitAll()
-                .antMatchers("/auth/login", "/auth/register").not().fullyAuthenticated() 
+                .antMatchers("/auth/login", "/auth/register").not().fullyAuthenticated()
+                .antMatchers("/crud/**").hasAuthority("ADMIN")
+                .antMatchers("/info/user").hasAnyAuthority("ADMIN", "USER")
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().loginPage("/auth/login")
+                .loginProcessingUrl("/logindata_destination")
+                .successHandler(successUserHandler)
+                .failureUrl("/auth/login?error=true")
+                .and()
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/auth/login").permitAll();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+    }
+
+    @Bean
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
