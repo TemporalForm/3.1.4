@@ -23,8 +23,13 @@
   <br>
 
   <label>Role:</label><br>
-  <input type="checkbox" name="roleIds" value="1"/> ADMIN<br><br>
-  <input type="checkbox" name="roleIds" value="2"/> USER<br>
+
+  <div th:each="role : ${allRoles}">
+    <input type = "checkbox"
+           name = "roleIds"
+           th:value = "${role.getId()}"
+           th:text = "${role.getName()}">
+  </div>
 
   <input type="submit" value="Create user">
 

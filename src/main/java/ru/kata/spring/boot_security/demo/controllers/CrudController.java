@@ -11,25 +11,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.models.Role;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
-import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 import javax.validation.Valid;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/crud")
 public class CrudController {
     private final UserService userService;
-    private final RoleRepository roleRepository;
 
     @Autowired
-    public CrudController(UserService userService, UserRepository userRepository, RoleRepository roleRepository) {
+    public CrudController(UserService userService) {
         this.userService = userService;
-        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/admin")
@@ -40,7 +36,7 @@ public class CrudController {
 
     @GetMapping("/new")
     public String newUser(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("allRoles", roleRepository.findAll());
+        model.addAttribute("allRoles", userService.getRoles());
         return "/crud/new";
     }
 
@@ -51,28 +47,32 @@ public class CrudController {
         if (bindingResult.hasErrors()) {
             return "/crud/new";
         }
-        List<Role> roles = (roleIds == null)
-                ? Collections.emptyList()
-                : roleRepository.findAllById(roleIds);
-        user.setRoles(roles);
-        userService.saveUser(user);
+        userService.saveUser(user, roleIds);
         return "redirect:/crud/admin";
     }
 
     @GetMapping("/edit")
     public String editUser(@RequestParam("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
+        model.addAttribute("allRoles", userService.getRoles());
         return "/crud/edit";
     }
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult,
-                             @RequestParam("id") Long id) {
+                             @RequestParam("id") Long id,
+                             @RequestParam(value="roleIds", required=false) List<Long> roleIds,
+                             Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("allRoles", userService.getRoles());
+            if (roleIds != null) {
+                List<Role> roles = new ArrayList<>(userService.getRoles());
+                user.setRoles(roles);
+            }
             return "/crud/edit";
         }
-        userService.updateUser(id, user);
+        userService.updateUser(id, user, roleIds);
         return "redirect:/crud/admin";
     }
 

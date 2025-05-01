@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity (debug = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final SuccessUserHandler successUserHandler;
@@ -28,17 +28,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable() 
                 .authorizeRequests()
                 .antMatchers("/error").permitAll()
-                .antMatchers("/auth/login", "/auth/register").not().fullyAuthenticated()
+                .antMatchers("/login", "/register").not().fullyAuthenticated()
                 .antMatchers("/crud/**").hasAuthority("ADMIN")
-                .antMatchers("/info/user").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers("/user").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/auth/login")
+                .formLogin().loginPage("/login")
                 .loginProcessingUrl("/logindata_destination")
                 .successHandler(successUserHandler)
-                .failureUrl("/auth/login?error=true")
+                .failureUrl("/login?error=true")
                 .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/auth/login").permitAll();
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/login").permitAll();
     }
 
     @Override

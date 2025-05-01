@@ -21,6 +21,17 @@
     <input th:field="*{password}" type="password" id="password">
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
     <br>
+
+    <label>Role:</label><br>
+
+    <div th:each="role : ${allRoles}">
+        <input type = "checkbox"
+               name = "roleIds"
+               th:value = "${role.getId()}"
+               th:checked = "${user.getRoles().contains(role)}"
+               th:text = "${role.getName()}">
+    </div>
+
     <input type="submit" value="Update user">
 
 </form>
