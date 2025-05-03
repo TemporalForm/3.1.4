@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     public void updateUser(Long id, User updatedUser, List<Long> roleIds) {
         User userToUpdate = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
-        userToUpdate.setUsername(updatedUser.getUsername());
+        userToUpdate.setFirstname(updatedUser.getFirstname());
         userToUpdate.setEmail(updatedUser.getEmail());
         userToUpdate.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         List<Role> roles = (roleIds == null)
@@ -75,9 +75,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(String email) {
         return userRepository
-                .getUserByUsernameWithRoles(username)
+                .getUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

@@ -12,7 +12,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Objects;
@@ -25,17 +27,27 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username")
-    @NotEmpty(message = "Name field should not be empty")
+    @Column(name = "Firstname")
+    @NotEmpty(message = "You must enter your firstname")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
-    private String username;
+    private String firstname;
 
-    @Column(name = "email")
-    @NotEmpty(message = "Email field should not be empty")
+    @Column(name = "Lastname")
+    @NotEmpty(message = "You must enter your lastname")
+    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
+    private String lastname;
+
+    @Column(name = "Age")
+    @NotNull(message = "You must select your age")
+    @Min(value = 1, message = "You must be older than 1 and younger than 127")
+    private Byte age;
+
+    @Column(name = "Email")
+    @NotEmpty(message = "You must enter your email")
     @Email(message = "Email should be valid")
     private String email;
 
-    @Column
+    @Column(name = "Password")
     @NotEmpty(message = "You must set your password")
     @Size(min = 6, message = "Password should be longer than 6 characters")
     private String password;
@@ -51,8 +63,10 @@ public class User {
 
     }
 
-    public User(String username, String email, String password) {
-        this.username = username;
+    public User(String firstname, String lastname, Byte age, String email, String password) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
         this.email = email;
         this.password = password;
     }
@@ -61,12 +75,28 @@ public class User {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setUsername(String name) {
-        this.username = name;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Byte getAge() {
+        return age;
+    }
+
+    public void setAge(Byte age) {
+        this.age = age;
     }
 
     public String getEmail() {

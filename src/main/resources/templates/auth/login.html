@@ -1,40 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login page</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-
-        body {
-            display: flex;
-            justify-content: center; /* по горизонтали */
-            align-items: center; /* по вертикали */
-            flex-direction: column; /* <— вот это добавлено */
-        }
-    </style>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"/>
 </head>
-<body>
-<form name="f" action="/logindata_destination" method="post">
+<body class="d-flex align-items-start justify-content-center vh-100 bg-light">
+<div class="container" style="margin-top: 10vh;">
+    <div class="row justify-content-center">
+        <div class="col-3">
+            <h2 class="fw-bold text-start mb-3">Please sign in</h2>
+            <form name="f" th:action="@{/logindata_destination}" method="post">
 
-    <label for="username">Enter username: </label>
-    <input type="text" name="username" id="username">
-    <br/>
+                <!-- Поле Email, которое работает как username (для Spring Security) -->
+                <div class="mb-0">
+                    <input
+                            type="username"
+                            id="username"
+                            name="username"
+                            class="form-control form-control-md w-100"
+                            placeholder="Email"
+                            required
+                            autofocus />
+                </div>
 
-    <label for="password">Enter password: </label>
-    <input type="password" name="password" id="password">
-    <br/>
+                <!-- Поле password -->
+                <div class="mb-2">
+                    <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control form-control-md w-100"
+                            placeholder="Password"
+                            required />
+                </div>
 
-    <input type="submit" value="Log In">
-    <a th:href="@{/register}">Register</a>
+                <!-- Кнопка Sign in -->
+                <button
+                        type="submit"
+                        class="btn btn-primary btn-md w-100 mb-1">
+                    Sign in
+                </button>
 
-    <div th:if="${param.error}" style="color: red">
-        Invalid username or password.
+                <!-- Ошибка при наличии параметра -->
+                <div
+                        th:if="${param.error}"
+                        class="alert alert-danger text-center">
+                    Invalid username or password.
+                </div>
+
+                <!-- Кнопка Register -->
+                <a
+                        th:href="@{/register}"
+                        class="btn btn-primary btn-md w-100">
+                    Register
+                </a>
+
+            </form>
+        </div>
     </div>
+</div>
 
-</form>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
 </body>
 </html>

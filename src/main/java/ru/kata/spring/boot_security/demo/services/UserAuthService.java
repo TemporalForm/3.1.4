@@ -21,16 +21,12 @@ public class UserAuthService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.getUserByUsernameWithRoles(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.getUserByEmailWithRoles(email);
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found: " + username);
+            throw new UsernameNotFoundException("User not found: " + email);
         }
         return new UserAuthDetails(user.get());
-    }
-
-    public Optional<User> findOptionalByUsername(String username) {
-        return userRepository.getUserByUsername(username);
     }
 
     public Optional<User> findOptionalByEmail(String email) {

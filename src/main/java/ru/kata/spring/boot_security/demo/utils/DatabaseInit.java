@@ -39,7 +39,13 @@ public class DatabaseInit {
             Role adminRole = roleRepository.findByName("ADMIN");
             Role userRole = roleRepository.findByName("USER");
 
-            User admin = new User("admin", "admin@gmail.com", passwordEncoder.encode("admin"));
+            User admin = new User(
+                    "admin",
+                    "admin",
+                    (byte) 30,
+                    "admin@gmail.com",
+                    passwordEncoder.encode("admin")
+            );
             if (admin.getRoles() == null) {
                 admin.setRoles(new ArrayList<>());
             }
@@ -47,7 +53,12 @@ public class DatabaseInit {
             admin.getRoles().add(userRole);
             userRepository.save(admin);
 
-            User user = new User("user", "user@example.com", passwordEncoder.encode("user"));
+            User user = new User(
+                    "user",
+                    "user", (byte) 18,
+                    "user@gmail.com",
+                    passwordEncoder.encode("user")
+            );
             if (user.getRoles() == null) {
                 user.setRoles(new ArrayList<>());
             }

@@ -7,31 +7,38 @@
 <body>
 <form th:object="${user}" th:action="@{/crud/admin}" method="post">
 
-  <label for="username">Enter name: </label>
-  <input th:field="*{username}" type="text" id="username">
-  <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
-  <br>
+    <label for="firstname">Enter name: </label>
+    <input th:field="*{firstname}" type="text" id="firstname">
+    <div style="color:red" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">Firstname error</div>
+    <br>
 
-  <label for="email">Enter email: </label>
-  <input th:field="*{email}" type="email" id="email">
-  <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
-  <br>
+    <label for="lastname">Enter lastname: </label>
+    <input th:field="*{lastname}" type="text" id="lastname">
+    <div style="color:red" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Lastname error</div>
+    <br>
 
-  <label for="password">Enter password: </label>
-  <input th:field="*{password}" type="password" id="password">
-  <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
-  <br>
+    <label for="age">Enter age: </label>
+    <input th:field="*{age}" type="number" id="age">
+    <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age error</div>
+    <br>
 
-  <label>Role:</label><br>
+    <label for="email">Enter email: </label>
+    <input th:field="*{email}" type="email" id="email">
+    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+    <br>
 
-  <div th:each="role : ${allRoles}">
-    <input type = "checkbox"
-           name = "roleIds"
-           th:value = "${role.getId()}"
-           th:text = "${role.getName()}">
-  </div>
+    <label for="password">Enter password: </label>
+    <input th:field="*{password}" type="password" id="password">
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
+    <br>
 
-  <input type="submit" value="Create user">
+    <label>Role:</label>
+    <br>
+    <div th:each="role : ${allRoles}">
+        <input type="checkbox" name="roleIds" th:value="${role.getId()}" th:text="${role.getName()}">
+    </div>
+
+    <input type="submit" value="Create user">
 
 </form>
 </body>
