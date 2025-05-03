@@ -3,7 +3,6 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.services.UserAuthService;
 import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.utils.ControllerUtil;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -35,32 +34,53 @@ public class CrudController {
 
     @GetMapping("/admin")
     public String printUsers(ModelMap model, Authentication auth) {
-        String username = auth.getName();
-        String roles = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-        model.addAttribute("authorisedUserEmail", username);
-        model.addAttribute("authorisedUserRoles", roles);
         model.addAttribute("users", userService.getUsers());
+        model.addAttribute("tab", "table");
+        model.addAttribute("authorisedUserEmail", auth.getName());
+        model.addAttribute("authorisedUserRoles", ControllerUtil.getAuthoritiesFromSecurityToken(auth));
         return "/crud/admin";
     }
 
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user, Model model) {
+    @GetMapping("/admin/new")
+    public String newUser(Model model, Authentication auth) {
+        model.addAttribute("user", new User());
         model.addAttribute("allRoles", userService.getRoles());
-        return "/crud/new";
+        model.addAttribute("tab", "new");
+        model.addAttribute("authorisedUserEmail", auth.getName());
+        model.addAttribute("authorisedUserRoles", ControllerUtil.getAuthoritiesFromSecurityToken(auth));
+        return "crud/admin";
     }
 
     @PostMapping("/admin")
-    public String addUser(@ModelAttribute("user") @Valid User user,
-                          BindingResult bindingResult,
-                          @RequestParam(value="roleIds", required=false) List<Long> roleIds) {
-        if (bindingResult.hasErrors()) {
-            return "/crud/new";
+    public String createUser(
+            @ModelAttribute("user") @Valid User user,
+            @RequestParam(value="roleIds", required=false) List<Long> roleIds,
+            BindingResult br,
+            Model model,
+            Authentication auth) {
+        if (br.hasErrors()) {
+
+            if (user.getId() == null) {
+                model.addAttribute("tab", "new");
+            } else {
+                model.addAttribute("tab", "table"); 
+            }
+            model.addAttribute("allRoles", userService.getRoles());
+            model.addAttribute("authorisedUserEmail", auth.getName());
+            model.addAttribute("authorisedUserRoles", ControllerUtil.getAuthoritiesFromSecurityToken(auth));
+            return "/crud/admin";
         }
-        userService.saveUser(user, roleIds);
+
+        if (user.getId() == null) {
+            userService.saveUser(user);
+        }
+
+        else {
+            userService.saveUser(user, roleIds);
+        }
         return "redirect:/crud/admin";
     }
+
 
     @GetMapping("/edit")
     public String editUser(@RequestParam("id") Long id, Model model) {

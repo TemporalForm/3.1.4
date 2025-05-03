@@ -17,6 +17,8 @@ public interface UserService {
 
     void saveUser(User user, List<Long> roleIds);
 
+    void saveUser(User user);
+
     void deleteUser(User user);
 
     void updateUser(Long id, User updatedUser, List<Long> roleIds);
