@@ -7,6 +7,11 @@
     <link
             href="https:
             rel="stylesheet"/>
+    <style>
+        .table tbody tr:last-child td {
+            border-bottom: none !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -37,7 +42,7 @@
         <main class="col-12 col-md-10 p-4">
             <h1 class="mb-4">Admin panel</h1>
 
-            <ul class="nav nav-tabs mb-3">
+            <ul class="nav nav-tabs mb-0"> 
                 <li class="nav-item">
                     <a th:href="@{/crud/admin}"
                        class="nav-link"
@@ -55,12 +60,12 @@
             </ul>
 
             <div th:if="${tab=='table'}">
-                <div class="card">
-                    <div class="card-header">All users</div>
-                    <div class="card-body p-0">
-                        <table class="table mb-0">
+                <div class="card rounded"> 
+                    <div class="card-header bg-light">All users</div> 
+                    <div class="card-body p-3"> 
+                        <table class="table mb-0 table-hover">
                             <thead>
-                            <tr>
+                            <tr class="border-top border-bottom"> 
                                 <th>ID</th>
                                 <th>First name</th>
                                 <th>Last name</th>
@@ -72,16 +77,28 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="user : ${users}">
+                            <tr th:each="user, userStat : ${users}"> 
                                 <td th:text="${user.getId()}">1</td>
                                 <td th:text="${user.getFirstname()}">John</td>
                                 <td th:text="${user.getLastname()}">Doe</td>
                                 <td th:text="${user.getAge()}">18</td>
-                                <td th:text="${user.getEmail()}">email@wxample.com</td>
+                                <td th:text="${user.getEmail()}">email@example.com</td>
                                 <td th:text="${#strings.listJoin(user.getRoles().![name], ' ')}">USER</td>
                                 <td>
-                                    <a th:href="@{/crud/edit/(id=${user.getId()})}"
-                                       class="btn btn-info btn-sm">Edit</a>
+                                    <button type="button"
+                                            class="btn btn-info btn-sm edit-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editUserModal"
+                                            th:attr="
+                                             data-id=${user.id},
+                                             data-firstname=${user.firstname},
+                                             data-lastname=${user.lastname},
+                                             data-age=${user.age},
+                                             data-email=${user.email},
+                                             data-roles=${#strings.listJoin(user.getRoles().![id], ',')}"
+                                    >
+                                        Edit
+                                    </button>
                                 </td>
                                 <td>
                                     <form th:action="@{/crud/delete}" method="post" class="d-inline">
@@ -183,9 +200,127 @@
     </div>
 </div>
 
-<script
-        src="https:
-</script>
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:object="${user}"
+                  th:action="@{/crud/update}"
+                  method="post"
+                  id="editUserForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden"
+                           name="id"
+                           id="edit-id"
+                           th:value="${user.id != null} ? ${user.id} : ${id}"/>
 
+                    <div class="mb-3">
+                        <label for="edit-firstname" class="form-label">First name</label>
+                        <input th:field="*{firstname}"
+                               type="text"
+                               class="form-control"
+                               id="edit-firstname"/>
+                        <div class="text-danger" th:errors="*{firstname}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-lastname" class="form-label">Last name</label>
+                        <input th:field="*{lastname}"
+                               type="text"
+                               class="form-control"
+                               id="edit-lastname"/>
+                        <div class="text-danger" th:errors="*{lastname}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-age" class="form-label">Age</label>
+                        <input th:field="*{age}"
+                               type="number"
+                               class="form-control"
+                               id="edit-age"/>
+                        <div class="text-danger" th:errors="*{age}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-email" class="form-label">Email</label>
+                        <input th:field="*{email}"
+                               type="email"
+                               class="form-control"
+                               id="edit-email"/>
+                        <div class="text-danger" th:errors="*{email}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-password" class="form-label">Password</label>
+                        <input th:field="*{password}"
+                               type="password"
+                               class="form-control"
+                               id="edit-password"/>
+                        <div class="text-danger" th:errors="*{password}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-roles" class="form-label">Roles</label>
+                        <select name="roleIds"
+                        multiple
+                        class="form-select"
+                        id="edit-roles"
+                        style="height: 3.5rem;">
+                        <option th:each="r : ${allRoles}"
+                                th:value="${r.id}"
+                                th:text="${r.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancel
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary">Save changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https:
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var editUserModal = document.getElementById('editUserModal');
+        editUserModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var firstname = button.getAttribute('data-firstname');
+            var lastname = button.getAttribute('data-lastname');
+            var age = button.getAttribute('data-age');
+            var email = button.getAttribute('data-email');
+            var roles = button.getAttribute('data-roles').split(',');
+
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-firstname').value = firstname;
+            document.getElementById('edit-lastname').value = lastname;
+            document.getElementById('edit-age').value = age;
+            document.getElementById('edit-email').value = email;
+            document.getElementById('edit-password').value = '';
+            var select = document.getElementById('edit-roles');
+            Array.from(select.options).forEach(function(option) {
+                option.selected = roles.includes(option.value);
+            });
+        });
+    });
+</script>
+<script th:if="${showEditModal}" th:inline="javascript">
+    var modal = new bootstrap.Modal(
+        document.getElementById('editUserModal')
+    );
+    modal.show();
+</script>
 </body>
 </html>

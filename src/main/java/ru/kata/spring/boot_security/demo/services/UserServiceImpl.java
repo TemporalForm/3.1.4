@@ -71,6 +71,8 @@ public class UserServiceImpl implements UserService {
         User userToUpdate = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
         userToUpdate.setFirstname(updatedUser.getFirstname());
+        userToUpdate.setLastname(updatedUser.getLastname());
+        userToUpdate.setAge(updatedUser.getAge());
         userToUpdate.setEmail(updatedUser.getEmail());
         userToUpdate.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         List<Role> roles = (roleIds == null)
