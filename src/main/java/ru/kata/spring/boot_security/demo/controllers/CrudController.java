@@ -17,6 +17,7 @@ import ru.kata.spring.boot_security.demo.utils.ControllerUtil;
 
 import javax.validation.Valid;
 import java.util.List;
+
 @Controller
 @RequestMapping("/crud")
 public class CrudController {
@@ -55,7 +56,7 @@ public class CrudController {
     @PostMapping("/admin")
     public String createUser(
             @ModelAttribute("user") @Valid User user,
-            @RequestParam(value="roleIds", required=false) List<Long> roleIds,
+            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
             BindingResult br,
             Model model,
             Authentication auth) {
@@ -83,12 +84,6 @@ public class CrudController {
     }
 
 
-    @GetMapping("/edit")
-    public String editUser(@RequestParam("id") Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("allRoles", userService.getRoles());
-        return "/crud/edit";
-    }
 
     @PostMapping("/update")
     public String updateUser(
@@ -99,8 +94,10 @@ public class CrudController {
             ModelMap model,
             Authentication auth) {
 
+        user.setId(id); 
         if (bindingResult.hasErrors()) {
             model.addAttribute("id", id);
+            model.addAttribute("user", user); 
             model.addAttribute("users", userService.getUsers());
             model.addAttribute("allRoles", userService.getRoles());
             model.addAttribute("tab", "table");
@@ -111,6 +108,12 @@ public class CrudController {
             return "crud/admin";
         }
         userService.updateUser(id, user, roleIds);
+        return "redirect:/crud/admin";
+    }
+
+    @PostMapping("/delete")
+    public String deleteUser(@RequestParam("id") Long id) {
+        userService.deleteUser(userService.getUserById(id));
         return "redirect:/crud/admin";
     }
 }
