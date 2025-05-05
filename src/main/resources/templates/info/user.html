@@ -1,40 +1,80 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8"/>
+    <title>User panel</title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link
+            rel="stylesheet"
+            th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" />
+    <style>
+        .table tbody tr:last-child td {
+            border-bottom: none !important;
+        }
+    </style>
 </head>
 <body>
-
-<h1>User Information</h1>
-
-<p>
-    <strong>First Name:</strong>
-    <span th:text="${user.lastname}">Lastname</span>
-</p>
-
-<p>
-    <strong>Last Name:</strong>
-    <span th:text="${user.lastname}">Lastname</span>
-</p>
-
-<p>
-    <strong>Age:</strong>
-    <span th:text="${user.age}">Age</span>
-</p>
-
-<p>
-    <strong>Email:</strong>
-    <span th:text="${user.email}">email@example.com</span>
-</p>
-<p>
-    <strong>Roles:</strong>
-</p>
-<ul>
-    <li th:each="role : ${user.roles}" th:text="${role.name}">ROLE_USER</li>
-</ul>
-
-<h3><a th:href="@{/logout}">Logout</a></h3>
-
+<div class="bg-dark text-white">
+    <div class="container-fluid d-flex justify-content-between align-items-center py-2">
+        <span>
+            <b th:text="${authorisedUserEmail}">user@mail.ru</b>
+            with roles: <b th:text="${authorisedUserRoles}">USER</b>
+        </span>
+        <a th:href="@{/logout}" class="text-white text-decoration-none">Logout</a>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <aside class="col-12 col-md-2 bg-light vh-100 p-3">
+            <div class="nav flex-column nav-pills">
+                <a th:if="${#strings.contains(authorisedUserRoles,'ADMIN')}"
+                   th:href="@{/crud/admin}"
+                   class="nav-link">
+                    Admin
+                </a>
+                <a th:href="@{/user}"
+                   class="nav-link"
+                   th:classappend="${tab=='user'} ? ' active' : ''">
+                    User
+                </a>
+            </div>
+        </aside>
+        <main class="col-12 col-md-10 p-4">
+            <h1 class="mb-4">User information-page</h1>
+            <div class="card rounded">
+                <div class="card-header bg-light">About user</div>
+                <div class="card-body p-3">
+                    <table class="table mb-0">
+                        <thead>
+                        <tr class="border-top border-bottom">
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Age</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${user.id}">3</td>
+                            <td th:text="${user.firstname}">user</td>
+                            <td th:text="${user.lastname}">user</td>
+                            <td th:text="${user.age}">30</td>
+                            <td th:text="${user.email}">user@mail.ru</td>
+                            <td th:text="${#strings.listJoin(user.roles.![name], ' ')}">
+                                USER
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script
+        th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}">
+</script>
 </body>
 </html>

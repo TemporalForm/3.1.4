@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http:
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Admin panel</title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
     <link
-            href="https:
-            rel="stylesheet"/>
+            rel="stylesheet"
+            th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" />
     <style>
         .table tbody tr:last-child td {
             border-bottom: none !important;
@@ -14,7 +14,6 @@
     </style>
 </head>
 <body>
-
 <div class="bg-dark text-white">
     <div class="container-fluid d-flex justify-content-between align-items-center py-2">
       <span>
@@ -24,10 +23,8 @@
         <a th:href="@{/logout}" class="text-white text-decoration-none">Logout</a>
     </div>
 </div>
-
 <div class="container-fluid">
     <div class="row">
-
         <aside class="col-12 col-md-2 bg-light vh-100 p-3">
             <div class="nav flex-column nav-pills">
                 <a th:href="@{/crud/admin}"
@@ -38,11 +35,9 @@
                 <a th:href="@{/user}" class="nav-link">User</a>
             </div>
         </aside>
-
         <main class="col-12 col-md-10 p-4">
             <h1 class="mb-4">Admin panel</h1>
-
-            <ul class="nav nav-tabs mb-0"> 
+            <ul class="nav nav-tabs mb-0">
                 <li class="nav-item">
                     <a th:href="@{/crud/admin}"
                        class="nav-link"
@@ -58,14 +53,13 @@
                     </a>
                 </li>
             </ul>
-
             <div th:if="${tab=='table'}">
-                <div class="card rounded"> 
-                    <div class="card-header bg-light">All users</div> 
-                    <div class="card-body p-3"> 
+                <div class="card rounded">
+                    <div class="card-header bg-light">All users</div>
+                    <div class="card-body p-3">
                         <table class="table mb-0 table-hover">
                             <thead>
-                            <tr class="border-top border-bottom"> 
+                            <tr class="border-top border-bottom">
                                 <th>ID</th>
                                 <th>First name</th>
                                 <th>Last name</th>
@@ -77,7 +71,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="user, userStat : ${users}"> 
+                            <tr th:each="user, userStat : ${allUsers}">
                                 <td th:text="${user.getId()}">1</td>
                                 <td th:text="${user.getFirstname()}">John</td>
                                 <td th:text="${user.getLastname()}">Doe</td>
@@ -106,12 +100,12 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteUserModal"
                                             th:attr="
-                data-id=${user.id},
-                data-firstname=${user.firstname},
-                data-lastname=${user.lastname},
-                data-age=${user.age},
-                data-email=${user.email},
-                data-roles=${#strings.listJoin(user.getRoles().![name], ',')}">
+                                             data-id=${user.id},
+                                             data-firstname=${user.firstname},
+                                             data-lastname=${user.lastname},
+                                             data-age=${user.age},
+                                             data-email=${user.email},
+                                             data-roles=${#strings.listJoin(user.getRoles().![name], ',')}">
                                         Delete
                                     </button>
                                 </td>
@@ -121,7 +115,6 @@
                     </div>
                 </div>
             </div>
-
             <div th:if="${tab=='new'}">
                 <div class="card">
                     <div class="card-header">Add new user</div>
@@ -130,9 +123,7 @@
                               th:action="@{/crud/admin}"
                               method="post"
                               class="row">
-
                             <div class="col-12 col-md-4 offset-md-4">
-
                                 <div class="mb-3">
                                     <label for="firstname" class="form-label">First name</label>
                                     <input th:field="*{firstname}"
@@ -141,7 +132,6 @@
                                            class="form-control"/>
                                     <div class="text-danger" th:errors="*{firstname}"></div>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="lastname" class="form-label">Last name</label>
                                     <input th:field="*{lastname}"
@@ -150,7 +140,6 @@
                                            class="form-control"/>
                                     <div class="text-danger" th:errors="*{lastname}"></div>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="age" class="form-label">Age</label>
                                     <input th:field="*{age}"
@@ -159,7 +148,6 @@
                                            class="form-control"/>
                                     <div class="text-danger" th:errors="*{age}"></div>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input th:field="*{email}"
@@ -168,7 +156,6 @@
                                            class="form-control"/>
                                     <div class="text-danger" th:errors="*{email}"></div>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
                                     <input th:field="*{password}"
@@ -177,7 +164,6 @@
                                            class="form-control"/>
                                     <div class="text-danger" th:errors="*{password}"></div>
                                 </div>
-
                                 <div class="mb-4">
                                     <label for="roles" class="form-label">Role</label>
                                     <select th:field="*{roles}"
@@ -191,24 +177,20 @@
                                         </option>
                                     </select>
                                 </div>
-
                                 <div class="text-center">
                                     <button type="submit"
                                             class="btn btn-success px-4">
                                         Add new user
                                     </button>
                                 </div>
-
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 </div>
-
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -225,7 +207,6 @@
                            name="id"
                            id="edit-id"
                            th:value="${user.id != null} ? ${user.id} : ${id}"/>
-
                     <div class="mb-3">
                         <label class="form-label">ID</label>
                         <input th:field="*{id}"
@@ -234,7 +215,6 @@
                                id="edit-id-display"
                                disabled/>
                     </div>
-
                     <div class="mb-3">
                         <label for="edit-firstname" class="form-label">First name</label>
                         <input th:field="*{firstname}"
@@ -243,7 +223,6 @@
                                id="edit-firstname"/>
                         <div class="text-danger" th:errors="*{firstname}"></div>
                     </div>
-
                     <div class="mb-3">
                         <label for="edit-lastname" class="form-label">Last name</label>
                         <input th:field="*{lastname}"
@@ -252,7 +231,6 @@
                                id="edit-lastname"/>
                         <div class="text-danger" th:errors="*{lastname}"></div>
                     </div>
-
                     <div class="mb-3">
                         <label for="edit-age" class="form-label">Age</label>
                         <input th:field="*{age}"
@@ -261,7 +239,6 @@
                                id="edit-age"/>
                         <div class="text-danger" th:errors="*{age}"></div>
                     </div>
-
                     <div class="mb-3">
                         <label for="edit-email" class="form-label">Email</label>
                         <input th:field="*{email}"
@@ -270,7 +247,6 @@
                                id="edit-email"/>
                         <div class="text-danger" th:errors="*{email}"></div>
                     </div>
-
                     <div class="mb-3">
                         <label for="edit-password" class="form-label">Password</label>
                         <input th:field="*{password}"
@@ -279,14 +255,13 @@
                                id="edit-password"/>
                         <div class="text-danger" th:errors="*{password}"></div>
                     </div>
-
                     <div class="mb-3">
                         <label for="edit-roles" class="form-label">Roles</label>
                         <select name="roleIds"
                                 multiple
                                 class="form-select"
                                 id="edit-roles"
-                                style="height: 3.5rem;">
+                                style="height: 4rem;">
                             <option th:each="r : ${allRoles}"
                                     th:value="${r.id}"
                                     th:text="${r.name}"></option>
@@ -306,7 +281,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -317,7 +291,6 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id" id="delete-id">
-
                     <div class="mb-3">
                         <label class="form-label">ID</label>
                         <input type="text" class="form-control" id="delete-id-display" disabled>
@@ -348,7 +321,7 @@
                                 multiple
                                 class="form-select"
                                 id="delete-roles"
-                                style="height: 3.5rem;"
+                                style="height: 4rem;"
                                 disabled>
                             <option th:each="r : ${allRoles}"
                                     th:value="${r.id}"
@@ -365,30 +338,27 @@
         </div>
     </div>
 </div>
-
-<script src="https:
-
+<script
+        th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}">
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var editUserModal = document.getElementById('editUserModal');
         editUserModal.addEventListener('show.bs.modal', function (event) {
-            var button    = event.relatedTarget;
-            var id        = button.getAttribute('data-id');
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
             var firstname = button.getAttribute('data-firstname');
-            var lastname  = button.getAttribute('data-lastname');
-            var age       = button.getAttribute('data-age');
-            var email     = button.getAttribute('data-email');
-            var roles     = button.getAttribute('data-roles').split(',');
-
-            document.getElementById('edit-id').value          = id;
-            document.getElementById('edit-id-display').value  = id;
-
-            document.getElementById('edit-firstname').value   = firstname;
-            document.getElementById('edit-lastname').value    = lastname;
-            document.getElementById('edit-age').value         = age;
-            document.getElementById('edit-email').value       = email;
-            document.getElementById('edit-password').value    = '';
-
+            var lastname = button.getAttribute('data-lastname');
+            var age = button.getAttribute('data-age');
+            var email = button.getAttribute('data-email');
+            var roles = button.getAttribute('data-roles').split(',');
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-id-display').value = id;
+            document.getElementById('edit-firstname').value = firstname;
+            document.getElementById('edit-lastname').value = lastname;
+            document.getElementById('edit-age').value = age;
+            document.getElementById('edit-email').value = email;
+            document.getElementById('edit-password').value = '';
             var select = document.getElementById('edit-roles');
             Array.from(select.options).forEach(function (option) {
                 option.selected = roles.includes(option.value);
@@ -403,7 +373,6 @@
             var age = button.getAttribute('data-age');
             var email = button.getAttribute('data-email');
             var roles = button.getAttribute('data-roles').split(',');
-
             document.getElementById('delete-id').value = id;
             document.getElementById('delete-id-display').value = id;
             document.getElementById('delete-firstname').value = firstname;
@@ -412,7 +381,7 @@
             document.getElementById('delete-email').value = email;
             document.getElementById('delete-roles').value = roles;
             var select = document.getElementById('delete-roles');
-            Array.from(select.options).forEach(function(option) {
+            Array.from(select.options).forEach(function (option) {
                 option.selected = roles.includes(option.value);
             });
         });

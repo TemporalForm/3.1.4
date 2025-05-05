@@ -25,19 +25,19 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginPage() {
-        return "/auth/login";
+        return "auth/login";
     }
 
     @GetMapping("/register")
     public String registerPage(@ModelAttribute("user") User user) {
-        return "/auth/register";
+        return "auth/register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        userValidator.validate(user, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "/auth/register";
+    public String registerUser(@ModelAttribute("user") @Valid User user, BindingResult br) {
+        userValidator.validate(user, br);
+        if (br.hasErrors()) {
+            return "auth/register";
         }
         userRegisterService.registerUser(user);
         return "redirect:/auth/login";

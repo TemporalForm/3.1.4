@@ -28,16 +28,19 @@ public class CrudController {
         this.userService = userService;
     }
 
+    @ModelAttribute
+    public void addUserInfo(Model model, Authentication auth) {
+        model.addAttribute("authorisedUserEmail", auth.getName());
+        model.addAttribute("authorisedUserRoles", ControllerUtil.getAuthoritiesFromSecurityToken(auth));
+    }
+
     @GetMapping("/admin")
     public String printUsers(ModelMap model, Authentication auth) {
-        model.addAttribute("users", userService.getUsers());
+        model.addAttribute("allUsers", userService.getUsers());
         model.addAttribute("allRoles", userService.getRoles());
         model.addAttribute("tab", "table");
         model.addAttribute("user", new User());
         model.addAttribute("showEditModal", false);
-        model.addAttribute("authorisedUserEmail", auth.getName());
-        model.addAttribute("authorisedUserRoles",
-                ControllerUtil.getAuthoritiesFromSecurityToken(auth));
         return "crud/admin";
     }
 
@@ -46,18 +49,15 @@ public class CrudController {
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", userService.getRoles());
         model.addAttribute("tab", "new");
-        model.addAttribute("showEditModal", false);          
-        model.addAttribute("authorisedUserEmail", auth.getName());
-        model.addAttribute("authorisedUserRoles",
-                ControllerUtil.getAuthoritiesFromSecurityToken(auth));
+        model.addAttribute("showEditModal", false);
         return "crud/admin";
     }
 
     @PostMapping("/admin")
     public String createUser(
             @ModelAttribute("user") @Valid User user,
-            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
             BindingResult br,
+            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
             Model model,
             Authentication auth) {
         if (br.hasErrors()) {
@@ -66,9 +66,6 @@ public class CrudController {
             } else {
                 model.addAttribute("tab", "table"); 
             }
-            model.addAttribute("allRoles", userService.getRoles());
-            model.addAttribute("authorisedUserEmail", auth.getName());
-            model.addAttribute("authorisedUserRoles", ControllerUtil.getAuthoritiesFromSecurityToken(auth));
             model.addAttribute("allRoles", userService.getRoles());
             return "crud/admin";
         }
@@ -88,22 +85,19 @@ public class CrudController {
     @PostMapping("/update")
     public String updateUser(
             @ModelAttribute("user") @Valid User user,
-            BindingResult bindingResult,
+            BindingResult br,
             @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
             @RequestParam("id") Long id,
             ModelMap model,
             Authentication auth) {
 
         user.setId(id); 
-        if (bindingResult.hasErrors()) {
+        if (br.hasErrors()) {
             model.addAttribute("id", id);
             model.addAttribute("user", user); 
-            model.addAttribute("users", userService.getUsers());
+            model.addAttribute("allUsers", userService.getUsers());
             model.addAttribute("allRoles", userService.getRoles());
             model.addAttribute("tab", "table");
-            model.addAttribute("authorisedUserEmail", auth.getName());
-            model.addAttribute("authorisedUserRoles",
-                    ControllerUtil.getAuthoritiesFromSecurityToken(auth));
             model.addAttribute("showEditModal", true);
             return "crud/admin";
         }
