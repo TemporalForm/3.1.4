@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container vh-100 d-flex align-items-start justify-content-center" style="margin-top: 10vh;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-3">
+            <h2 class="fw-bold text-start mb-3">Please sign up</h2>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="firstname" class="form-label">First name</label>
+                            <input type="text" id="firstname" class="form-control">
+                            <div class="text-danger" id="err-firstname"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastname" class="form-label">Last name</label>
+                            <input type="text" id="lastname" class="form-control">
+                            <div class="text-danger" id="err-lastname"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" id="age" class="form-control">
+                            <div class="text-danger" id="err-age"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control">
+                            <div class="text-danger" id="err-email"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" class="form-control">
+                            <div class="text-danger" id="err-password"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Sign up</button>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <a href="/login" class="btn btn-link">← Back to Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        document.querySelectorAll('#registerForm .text-danger').forEach(el => el.textContent = '');
+        const payload = {
+            firstname:  document.getElementById('firstname').value.trim(),
+            lastname:   document.getElementById('lastname').value.trim(),
+            age:        Number(document.getElementById('age').value),
+            email:      document.getElementById('email').value.trim(),
+            password:   document.getElementById('password').value
+        };
+        const resp = await fetch('/api/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if (resp.status === 201) {
+            window.location = '/login?registered';
+        } else if (resp.status === 400) {
+            const errors = await resp.json();
+            errors.forEach(err => {
+                const field = err.field || '';
+                const target = document.getElementById(`err-${field}`);
+                if (target) target.textContent = err.defaultMessage || err.code;
+            });
+        } else {
+            alert('Unexpected error: ' + resp.status);
+        }
+    });
+</script>
+</body>
+</html>

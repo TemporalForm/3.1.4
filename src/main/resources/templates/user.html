@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User panel</title>
+    <link href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>.table tbody tr:last-child td{border-bottom:none!important}</style>
+</head>
+<body>
+<div class="bg-dark text-white">
+    <div class="container-fluid d-flex justify-content-between align-items-center py-2">
+        <span><b id="topEmail">email</b> with roles: <b id="topRoles">roles</b></span>
+        <a href="/logout" class="text-white text-decoration-none">Logout</a>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <aside class="col-12 col-md-2 bg-light vh-100 p-3">
+            <div class="nav flex-column nav-pills">
+                <a href="/admin" id="adminLink" class="nav-link d-none">Admin</a>
+                <a href="/user" class="nav-link active">User</a>
+            </div>
+        </aside>
+        <main class="col-12 col-md-10 p-4">
+            <h1 class="mb-4">User information-page</h1>
+            <div class="card rounded">
+                <div class="card-header bg-light">About user</div>
+                <div class="card-body p-3">
+                    <table class="table mb-0">
+                        <thead><tr class="border-top border-bottom">
+                            <th>ID</th><th>First Name</th><th>Last Name</th><th>Age</th><th>Email</th><th>Roles</th>
+                        </tr></thead>
+                        <tbody><tr>
+                            <td id="u-id"></td><td id="u-fn"></td><td id="u-ln"></td>
+                            <td id="u-age"></td><td id="u-email"></td><td id="u-roles"></td>
+                        </tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    (async () => {
+        const resp = await fetch('/api/user',{credentials:'same-origin'});
+        if(!resp.ok) return alert('Failed to load user');
+        const u = await resp.json();
+        const rolesStr = u.roles.map(r=>r.name).join(' ');
+        document.getElementById('topEmail').textContent = u.email;
+        document.getElementById('topRoles').textContent = rolesStr;
+        if(rolesStr.includes('ADMIN')) document.getElementById('adminLink').classList.remove('d-none');
+        document.getElementById('u-id').textContent    = u.id;
+        document.getElementById('u-fn').textContent    = u.firstname;
+        document.getElementById('u-ln').textContent    = u.lastname;
+        document.getElementById('u-age').textContent   = u.age;
+        document.getElementById('u-email').textContent = u.email;
+        document.getElementById('u-roles').textContent = rolesStr;
+    })();
+</script>
+</body>
+</html>

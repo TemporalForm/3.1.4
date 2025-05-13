@@ -1,96 +1,72 @@
 package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import ru.kata.spring.boot_security.demo.dtos.UserDTO;
+import ru.kata.spring.boot_security.demo.model_mappers.ControllerModelMapper;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
-import ru.kata.spring.boot_security.demo.utils.ControllerUtil;
 import javax.validation.Valid;
 import java.util.List;
-@Controller
-@RequestMapping("/crud")
+import java.util.stream.Collectors;
+@RestController
+@RequestMapping("/api")
 public class CrudController {
     private final UserService userService;
+    private final ControllerModelMapper modelMapper;
     @Autowired
-    public CrudController(UserService userService) {
+    public CrudController(UserService userService, ControllerModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
-    @ModelAttribute
-    public void addUserInfo(Model model, Authentication auth) {
-        model.addAttribute("authorisedUserEmail", auth.getName());
-        model.addAttribute("authorisedUserRoles", ControllerUtil.getAuthoritiesFromSecurityToken(auth));
+    @GetMapping("/users")
+    public List<UserDTO> getAll() {
+        return userService.getUsers()
+                .stream()
+                .map(modelMapper::convertToUserDTO)
+                .collect(Collectors.toList());
     }
-    @GetMapping("/admin")
-    public String printUsers(ModelMap model) {
-        model.addAttribute("allUsers", userService.getUsers());
-        model.addAttribute("allRoles", userService.getRoles());
-        model.addAttribute("tab", "table");
-        model.addAttribute("user", new User());
-        model.addAttribute("showEditModal", false);
-        return "crud/admin";
+    @GetMapping("/users/{id}")
+    public UserDTO getOne(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        return modelMapper.convertToUserDTO(user);
     }
-    @GetMapping("/admin/new")
-    public String newUser(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("allRoles", userService.getRoles());
-        model.addAttribute("tab", "new");
-        model.addAttribute("showEditModal", false);
-        return "crud/admin";
+    @PostMapping("/users")
+    public ResponseEntity<UserDTO> create(@RequestBody @Valid UserDTO dto) {
+        User user = modelMapper.convertToUser(dto);
+        userService.saveUser(user, modelMapper.extractRoleIds(dto));                
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(modelMapper.convertToUserDTO(user));
     }
-    @PostMapping("/admin")
-    public String createUser(
-            @ModelAttribute("user") @Valid User user,
-            BindingResult br,
-            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
-            Model model) {
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                          @RequestBody @Valid UserDTO dto,
+                                          BindingResult br) {
         if (br.hasErrors()) {
-            if (user.getId() == null) {
-                model.addAttribute("tab", "new");
-            } else {
-                model.addAttribute("tab", "table"); 
-            }
-            model.addAttribute("allRoles", userService.getRoles());
-            return "crud/admin";
+            return ResponseEntity.badRequest().body(br.getFieldErrors());
         }
-        if (user.getId() == null) {
-            userService.saveUser(user);
-        }
-        else {
-            userService.saveUser(user, roleIds);
-        }
-        return "redirect:/crud/admin";
+        User user = modelMapper.convertToUser(dto);
+        userService.updateUser(id, user, modelMapper.extractRoleIds(dto));
+        return ResponseEntity.ok(dto);
     }
-    @PostMapping("/update")
-    public String updateUser(
-            @ModelAttribute("user") @Valid User user,
-            BindingResult br,
-            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
-            @RequestParam("id") Long id,
-            ModelMap model) {
-        user.setId(id); 
-        if (br.hasErrors()) {
-            model.addAttribute("id", id);
-            model.addAttribute("user", user); 
-            model.addAttribute("allUsers", userService.getUsers());
-            model.addAttribute("allRoles", userService.getRoles());
-            model.addAttribute("tab", "table");
-            model.addAttribute("showEditModal", true);
-            return "crud/admin";
-        }
-        userService.updateUser(id, user, roleIds);
-        return "redirect:/crud/admin";
-    }
-    @PostMapping("/delete")
-    public String deleteUser(@RequestParam("id") Long id) {
+    @DeleteMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         userService.deleteUser(userService.getUserById(id));
-        return "redirect:/crud/admin";
+    }
+    @GetMapping("/roles")
+    public List<Role> getRoles() {
+        return userService.getRoles();
     }
 }

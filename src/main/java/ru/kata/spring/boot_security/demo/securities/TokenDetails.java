@@ -1,12 +1,12 @@
-package ru.kata.spring.boot_security.demo.utils;
+package ru.kata.spring.boot_security.demo.securities;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.stream.Collectors;
 
-public class ControllerUtil {
-    private ControllerUtil() {
+public class TokenDetails {
+    private TokenDetails() {
 
     }
 

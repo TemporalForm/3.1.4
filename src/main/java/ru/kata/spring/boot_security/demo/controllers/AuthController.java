@@ -1,45 +1,40 @@
 package ru.kata.spring.boot_security.demo.controllers;
-
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.kata.spring.boot_security.demo.dtos.UserDTO;
+import ru.kata.spring.boot_security.demo.model_mappers.ControllerModelMapper;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.UserRegisterService;
 import ru.kata.spring.boot_security.demo.utils.UserValidator;
-
 import javax.validation.Valid;
-
-@Controller
+@RestController
+@RequestMapping("/api")
 public class AuthController {
     private final UserRegisterService userRegisterService;
     private final UserValidator userValidator;
-
+    private final ControllerModelMapper modelMapper;
     @Autowired
-    public AuthController(UserRegisterService userRegisterService, UserValidator userValidator) {
+    public AuthController(UserRegisterService userRegisterService, UserValidator userValidator, ControllerModelMapper modelMapper) {
         this.userValidator = userValidator;
         this.userRegisterService = userRegisterService;
+        this.modelMapper = modelMapper;
     }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "auth/login";
-    }
-
-    @GetMapping("/register")
-    public String registerPage(@ModelAttribute("user") User user) {
-        return "auth/register";
-    }
-
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") @Valid User user, BindingResult br) {
+    public ResponseEntity<?> register(@RequestBody @Valid UserDTO dto,
+                                      BindingResult br) {
+        User user = modelMapper.convertToUser(dto);
         userValidator.validate(user, br);
         if (br.hasErrors()) {
-            return "auth/register";
+            return ResponseEntity.badRequest().body(br.getAllErrors());
         }
         userRegisterService.registerUser(user);
-        return "redirect:/auth/login";
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
